@@ -22,9 +22,10 @@ FreeBSD_task:
     curl -sSLO https://dot.net/v1/dotnet-install.sh
     sed -i '' 's/echo "freebsd"/echo "linux"/' dotnet-install.sh
     chmod +x dotnet-install.sh
-    ./dotnet-install.sh --version 5.0.100-preview.8.20362.3
+    ./dotnet-install.sh --version 5.0.100-rc.1.20407.13
 
   emulate dotnet_script: |
     dotnet --info
     dotnet new console -n hwapp
-    dotnet run -p hwapp
+    dotnet build hwapp /v:diag
+    dotnet run -p hwapp --no-build
