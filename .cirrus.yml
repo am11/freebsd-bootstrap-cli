@@ -1,18 +1,6 @@
-Linux_task:
-  container:
-    image: ubuntu:latest
-
-  install package_script: apt update && apt install -y gcc curl
-
-  build hack (managed)_script: echo "/* coreclr-27955-workaround.c */ int sched_getcpu(void) { return 0; }" | gcc -xc -shared -o libcoreclr-27955-workaround.so -
-
-  publish_script: curl -s -X POST --data-binary @libcoreclr-27955-workaround.so http://$CIRRUS_HTTP_CACHE_HOST/libcoreclr-27955-workaround.so
-
 FreeBSD_task:
   freebsd_instance:
-    image_family: freebsd-12-0
-
-  depends_on: Linux
+    image_family: freebsd-12-1
 
   env:
     HOME: /root
@@ -24,6 +12,7 @@ FreeBSD_task:
     kldstat
 
   install packages_script: |
+    pkg update
     pkg install -y bash emulators/linux_base-c7
 
   mount procfs_script: |
@@ -33,11 +22,9 @@ FreeBSD_task:
     curl -sSLO https://dot.net/v1/dotnet-install.sh
     sed -i '' 's/echo "freebsd"/echo "linux"/' dotnet-install.sh
     chmod +x dotnet-install.sh
-    ./dotnet-install.sh -Channel 3.1
-
-  download workaround .so_script: curl -vO http://$CIRRUS_HTTP_CACHE_HOST/libcoreclr-27955-workaround.so
+    ./dotnet-install.sh --version 5.0.100-preview.8.20362.3
 
   emulate dotnet_script: |
-    LD_PRELOAD=$(pwd)/libcoreclr-27955-workaround.so     dotnet --info
-    LD_PRELOAD=$(pwd)/libcoreclr-27955-workaround.so     dotnet new console -n hwapp
-    LD_PRELOAD=$(pwd)/libcoreclr-27955-workaround.so     dotnet run -p hwapp
+    dotnet --info
+    dotnet new console -n hwapp
+    dotnet run -p hwapp
