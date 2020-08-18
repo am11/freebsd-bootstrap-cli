@@ -28,5 +28,6 @@ FreeBSD_task:
     dotnet --info
     dotnet new console -n hwapp
 
-    dotnet build hwapp
-    dotnet run -p hwapp --no-build
+    dotnet app/hello-world.dll
+    #dotnet build hwapp
+    #dotnet run -p hwapp --no-build
