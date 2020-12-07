@@ -29,5 +29,5 @@ FreeBSD_task:
     dotnet new console -n hwapp
 
     dotnet app/hello-world.dll
-    #dotnet build hwapp
-    #dotnet run -p hwapp --no-build
+    truss -f dotnet build hwapp
+    # dotnet run -p hwapp --no-build
